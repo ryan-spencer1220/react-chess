@@ -1,0 +1,36 @@
+.square {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.square .chess-piece {
+  width: 100px;
+  height: 100px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.chess-piece:hover {
+  cursor: grab;
+}
+
+.chess-piece:active {
+  cursor: grabbing;
+}
+
+.white {
+  background-color: #f0d9b5;
+}
+
+.black {
+  background-color: #b58863;
+}
+
+.square .chess-piece {
+  width: 80px;
+  height: 80px;
+}
