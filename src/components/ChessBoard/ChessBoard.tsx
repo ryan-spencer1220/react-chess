@@ -6,11 +6,12 @@ import Ruleset from "../../ruleset/ruleset";
 const horizontalAxis = ["a", "b", "c", "d", "e", "f", "g", "h"];
 const verticalAxis = ["1", "2", "3", "4", "5", "6", "7", "8"];
 
-interface Piece {
+export interface Piece {
   image: string;
   x: number;
   y: number;
   type: PieceType;
+  team: TeamType;
 }
 
 export enum PieceType {
@@ -22,7 +23,85 @@ export enum PieceType {
   KING,
 }
 
+export enum TeamType {
+  OPPONENT,
+  OUR,
+}
+
 const initialBoardState: Piece[] = [];
+
+for (let p = 0; p < 2; p++) {
+  const teamType = p === 0 ? TeamType.OPPONENT : TeamType.OUR;
+  const type = teamType === TeamType.OPPONENT ? "b" : "w";
+  const y = teamType === TeamType.OPPONENT ? 7 : 0;
+
+  initialBoardState.push({
+    image: `assets/images/rook_${type}.png`,
+    x: 0,
+    y,
+    type: PieceType.ROOK,
+    team: teamType,
+  });
+  initialBoardState.push({
+    image: `assets/images/rook_${type}.png`,
+    x: 7,
+    y,
+    type: PieceType.ROOK,
+    team: teamType,
+  });
+  initialBoardState.push({
+    image: `assets/images/knight_${type}.png`,
+    x: 1,
+    y,
+    type: PieceType.KNIGHT,
+    team: teamType,
+  });
+  initialBoardState.push({
+    image: `assets/images/knight_${type}.png`,
+    x: 6,
+    y,
+    type: PieceType.KNIGHT,
+    team: teamType,
+  });
+  initialBoardState.push({
+    image: `assets/images/bishop_${type}.png`,
+    x: 2,
+    y,
+    type: PieceType.BISHOP,
+    team: teamType,
+  });
+  initialBoardState.push({
+    image: `assets/images/bishop_${type}.png`,
+    x: 5,
+    y,
+    type: PieceType.BISHOP,
+    team: teamType,
+  });
+  initialBoardState.push({
+    image: `assets/images/queen_${type}.png`,
+    x: 3,
+    y,
+    type: PieceType.QUEEN,
+    team: teamType,
+  });
+  initialBoardState.push({
+    image: `assets/images/king_${type}.png`,
+    x: 4,
+    y,
+    type: PieceType.KING,
+    team: teamType,
+  });
+}
+
+for (let i = 0; i < 8; i++) {
+  initialBoardState.push({
+    image: "assets/images/pawn_b.png",
+    x: i,
+    y: 6,
+    type: PieceType.PAWN,
+    team: TeamType.OPPONENT,
+  });
+}
 
 for (let i = 0; i < 8; i++) {
   initialBoardState.push({
@@ -30,66 +109,7 @@ for (let i = 0; i < 8; i++) {
     x: i,
     y: 1,
     type: PieceType.PAWN,
-  });
-  initialBoardState.push({
-    image: "assets/images/pawn_b.png",
-    x: i,
-    y: 6,
-    type: PieceType.PAWN,
-  });
-}
-
-for (let i = 0; i < 8; i++) {
-  const type = i % 2 === 0 ? "b" : "w";
-  const y = i % 2 === 0 ? 7 : 0;
-
-  initialBoardState.push({
-    image: `assets/images/rook_${type}.png`,
-    x: 0,
-    y,
-    type: PieceType.ROOK,
-  });
-  initialBoardState.push({
-    image: `assets/images/rook_${type}.png`,
-    x: 7,
-    y,
-    type: PieceType.ROOK,
-  });
-  initialBoardState.push({
-    image: `assets/images/knight_${type}.png`,
-    x: 1,
-    y,
-    type: PieceType.KNIGHT,
-  });
-  initialBoardState.push({
-    image: `assets/images/knight_${type}.png`,
-    x: 6,
-    y,
-    type: PieceType.KNIGHT,
-  });
-  initialBoardState.push({
-    image: `assets/images/bishop_${type}.png`,
-    x: 2,
-    y,
-    type: PieceType.BISHOP,
-  });
-  initialBoardState.push({
-    image: `assets/images/bishop_${type}.png`,
-    x: 5,
-    y,
-    type: PieceType.BISHOP,
-  });
-  initialBoardState.push({
-    image: `assets/images/queen_${type}.png`,
-    x: 3,
-    y,
-    type: PieceType.QUEEN,
-  });
-  initialBoardState.push({
-    image: `assets/images/king_${type}.png`,
-    x: 4,
-    y,
-    type: PieceType.KING,
+    team: TeamType.OUR,
   });
 }
 
@@ -158,14 +178,30 @@ const ChessBoard = () => {
         Math.ceil((e.clientY - chessBoard!.offsetTop - 800) / 100)
       );
 
+      //UPDATES THE PIECE POSITION
       setPieces((value) => {
-        const pieces = value.map((piece) => {
-          if (piece.x === gridX && piece.y === gridY) {
-            rulesetRef.invalidMove(gridX, gridY, x, y, piece.type);
-            piece.x = x;
-            piece.y = y;
+        const pieces = value.map((p) => {
+          if (p.x === gridX && p.y === gridY) {
+            const validMove = rulesetRef.isValidMove(
+              gridX,
+              gridY,
+              x,
+              y,
+              p.type,
+              p.team,
+              value
+            );
+
+            if (validMove) {
+              p.x = x;
+              p.y = y;
+            } else {
+              activePiece.style.position = "relative";
+              activePiece.style.removeProperty("top");
+              activePiece.style.removeProperty("left");
+            }
           }
-          return piece;
+          return p;
         });
         return pieces;
       });
