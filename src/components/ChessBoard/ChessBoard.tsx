@@ -196,7 +196,7 @@ const ChessBoard = () => {
           //UPDATES THE PIECE POSITION
           //AND IF A PIECE IS ATTACKED, REMOVES IT
           const updatedPieces = pieces.reduce((results, piece) => {
-            if (piece.x === currentPiece.x && piece.y === currentPiece.y) {
+            if (piece.x === gridX && piece.y === gridY) {
               piece.x = x;
               piece.y = y;
               results.push(piece);

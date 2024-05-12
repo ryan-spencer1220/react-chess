@@ -37,12 +37,6 @@ export default class Ruleset {
     team: TeamType,
     boardState: Piece[]
   ) {
-    console.log("Referee is checking the move...");
-    console.log(`Previous location: (${px},${py})`);
-    console.log(`Current location: (${x},${y})`);
-    console.log(`Piece type: ${type}`);
-    console.log(`Team: ${team}`);
-
     // Pawn Movement Logic
     if (type === PieceType.PAWN) {
       const specialRow = team === TeamType.OUR ? 1 : 6;
