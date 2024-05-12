@@ -7,8 +7,21 @@ import {
 export default class Ruleset {
   tileIsOccupied(x: number, y: number, boardState: Piece[]): boolean {
     const piece = boardState.find((p) => p.x === x && p.y === y);
-
     if (piece) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  TileIsOccupiedByOpponent(
+    x: number,
+    y: number,
+    boardState: Piece[],
+    team: TeamType
+  ): boolean {
+    const piece = boardState.find((p) => p.x === x && p.y === y);
+    if (piece && piece.team !== team) {
       return true;
     } else {
       return false;
@@ -30,6 +43,7 @@ export default class Ruleset {
     console.log(`Piece type: ${type}`);
     console.log(`Team: ${team}`);
 
+    // Pawn Movement Logic
     if (type === PieceType.PAWN) {
       const specialRow = team === TeamType.OUR ? 1 : 6;
       const pawnDirection = team === TeamType.OUR ? 1 : -1;
@@ -43,6 +57,16 @@ export default class Ruleset {
         }
       } else if (px === x && y - py === pawnDirection) {
         if (!this.tileIsOccupied(x, y, boardState)) {
+          return true;
+        }
+      }
+      // Pawn Capture Logic
+      else if (x - px === -1 && y - py === pawnDirection) {
+        if (this.TileIsOccupiedByOpponent(x, y, boardState, team)) {
+          return true;
+        }
+      } else if (x - px === 1 && y - py === pawnDirection) {
+        if (this.TileIsOccupiedByOpponent(x, y, boardState, team)) {
           return true;
         }
       }
