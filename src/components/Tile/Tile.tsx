@@ -8,12 +8,7 @@ interface Props {
 const Tile = ({ color, image }: Props) => {
   return (
     <div className={`square ${color}`}>
-      {image && (
-        <div
-          style={{ backgroundImage: `url(${image})` }}
-          className="chess-piece"
-        ></div>
-      )}
+      {image && <div style={{ backgroundImage: `url(${image})` }} className="chess-piece"></div>}
     </div>
   );
 };

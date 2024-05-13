@@ -27,9 +27,7 @@ const ChessBoard = () => {
     if (element.classList.contains("chess-piece") && chessBoard) {
       setGrabPosition({
         x: Math.floor((e.clientX - chessBoard.offsetLeft) / GRID_SIZE),
-        y: Math.abs(
-          Math.ceil((e.clientY - chessBoard.offsetTop - 800) / GRID_SIZE)
-        ),
+        y: Math.abs(Math.ceil((e.clientY - chessBoard.offsetTop - 800) / GRID_SIZE)),
       });
 
       const x = e.clientX - GRID_SIZE / 2;
@@ -75,13 +73,9 @@ const ChessBoard = () => {
     const chessboard = chessBoardRef.current;
     if (activePiece && chessboard) {
       const x = Math.floor((e.clientX - chessboard.offsetLeft) / GRID_SIZE);
-      const y = Math.abs(
-        Math.ceil((e.clientY - chessboard.offsetTop - 800) / GRID_SIZE)
-      );
+      const y = Math.abs(Math.ceil((e.clientY - chessboard.offsetTop - 800) / GRID_SIZE));
 
-      const currentPiece = pieces.find((p) =>
-        samePosition(p.position, grabPosition)
-      );
+      const currentPiece = pieces.find((p) => samePosition(p.position, grabPosition));
 
       if (currentPiece) {
         const validMove = rulesetRef.isValidMove(
@@ -109,9 +103,7 @@ const ChessBoard = () => {
               piece.position.x = x;
               piece.position.y = y;
               results.push(piece);
-            } else if (
-              !samePosition(piece.position, { x, y: y - pawnDirection })
-            ) {
+            } else if (!samePosition(piece.position, { x, y: y - pawnDirection })) {
               if (piece.type === PieceType.PAWN) {
                 piece.enpassant = false;
               }
@@ -125,10 +117,7 @@ const ChessBoard = () => {
           //AND IF A PIECE IS ATTACKED, REMOVES IT
           const updatedPieces = pieces.reduce((results, piece) => {
             if (samePosition(piece.position, grabPosition)) {
-              if (
-                Math.abs(grabPosition.y - y) === 2 &&
-                currentPiece.type === PieceType.PAWN
-              ) {
+              if (Math.abs(grabPosition.y - y) === 2 && currentPiece.type === PieceType.PAWN) {
                 piece.enpassant = true;
               } else {
                 piece.enpassant = false;
@@ -163,11 +152,7 @@ const ChessBoard = () => {
       let image = piece ? piece.image : "";
 
       board.push(
-        <Tile
-          key={`${HORIZONTAL_AXIS[i]}${VERTICAL_AXIS[j]}`}
-          color={squareColor}
-          image={image}
-        />
+        <Tile key={`${HORIZONTAL_AXIS[i]}${VERTICAL_AXIS[j]}`} color={squareColor} image={image} />
       );
     }
   }
