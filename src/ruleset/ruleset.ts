@@ -278,7 +278,6 @@ export default class Ruleset {
         }
       }
     } else if (type === PieceType.ROOK) {
-      console.log("Rook movement");
       if (desiredPosition.x === initialPosition.x) {
         for (
           let i = Math.min(desiredPosition.y, initialPosition.y) + 1;
@@ -309,6 +308,47 @@ export default class Ruleset {
           }
         }
         return true;
+      }
+    } else if (type === PieceType.QUEEN) {
+      if (
+        this.isValidMove(
+          initialPosition,
+          desiredPosition,
+          PieceType.ROOK,
+          team,
+          boardState
+        ) ||
+        this.isValidMove(
+          initialPosition,
+          desiredPosition,
+          PieceType.BISHOP,
+          team,
+          boardState
+        )
+      ) {
+        return true;
+      }
+    } else if (type === PieceType.KING) {
+      for (let i = -1; i < 2; i++) {
+        for (let j = -1; j < 2; j++) {
+          if (i === 0 && j === 0) {
+            continue;
+          }
+          if (
+            desiredPosition.x === initialPosition.x + i &&
+            desiredPosition.y === initialPosition.y + j
+          ) {
+            if (
+              this.tileIsEmptyOrOccupiedByOpponent(
+                desiredPosition,
+                boardState,
+                team
+              )
+            ) {
+              return true;
+            }
+          }
+        }
       }
     }
     return false;
