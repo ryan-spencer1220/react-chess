@@ -1,7 +1,6 @@
 import { Position, TeamType } from "../../Constants";
 import { Piece } from "../../InitialBoardState";
 import { tileIsOccupied, tileIsOccupiedByOpponent } from "./Helper";
-import { samePosition } from "../../Constants";
 
 export const pawnMovementLogic = (
   initialPosition: Position,

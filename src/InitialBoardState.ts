@@ -5,7 +5,7 @@ export interface Piece {
   position: Position;
   type: PieceType;
   team: TeamType;
-  enpassant?: boolean;
+  enPassant?: boolean;
   possibleMoves?: Position[];
 }
 
