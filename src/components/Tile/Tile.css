@@ -1,36 +1,34 @@
-.square {
+.tile {
+  display: grid;
+  place-content: center;
   width: 100px;
   height: 100px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
-.square .chess-piece {
+.tile .chess-piece {
   width: 100px;
   height: 100px;
   background-repeat: no-repeat;
   background-position: center;
-  background-size: contain;
+  background-size: 80px;
 }
 
-.chess-piece:hover {
+.tile .chess-piece:hover {
   cursor: grab;
 }
 
-.chess-piece:active {
+.tile .chess-piece:active {
   cursor: grabbing;
 }
 
-.white {
-  background-color: #f0d9b5;
-}
-
-.black {
+.black-tile {
   background-color: #b58863;
 }
 
-.square .chess-piece {
+.white-tile {
+  background-color: #f0d9b5;
+}
+
+.tile img {
   width: 80px;
-  height: 80px;
 }

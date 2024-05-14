@@ -1,4 +1,4 @@
-import { Position, TeamType, PieceType } from "../../Constants";
+import { Position, TeamType } from "../../Constants";
 import { Piece } from "../../InitialBoardState";
 import { samePosition } from "../../Constants";
 

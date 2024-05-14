@@ -6,6 +6,7 @@ export interface Piece {
   type: PieceType;
   team: TeamType;
   enpassant?: boolean;
+  possibleMoves?: Position[];
 }
 
 export const initialBoardState: Piece[] = [
