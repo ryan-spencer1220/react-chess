@@ -5,3 +5,46 @@
   grid-template-columns: repeat(8, 1fr);
   grid-template-rows: repeat(8, 1fr);
 }
+
+/*Prevents playfield from being accessible while modal is active*/
+#pawn-promotion-modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+#pawn-promotion-modal.hidden {
+  display: none;
+}
+
+#pawn-promotion-modal > #promotion-choices {
+  position: absolute;
+  top: calc(50% - 150px);
+  left: calc(50% - 400px);
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: 300px;
+  width: 800px;
+}
+
+#pawn-promotion-modal > div {
+  display: flex;
+  justify-content: center;
+}
+
+.promotion-choice > img {
+  height: 100px;
+  margin: 0 10px;
+  padding: 20px;
+  transition: background-color 0.5s;
+}
+
+.promotion-choice > img:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 5px;
+  cursor: pointer;
+}

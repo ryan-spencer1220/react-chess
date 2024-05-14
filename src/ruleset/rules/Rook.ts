@@ -1,4 +1,4 @@
-import { Position, TeamType } from "../../Constants";
+import { Position } from "../../Constants";
 import { Piece } from "../../InitialBoardState";
 import { tileIsOccupied } from "./Helper";
 

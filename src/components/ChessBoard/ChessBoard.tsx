@@ -1,7 +1,7 @@
 import "./ChessBoard.css";
 import Tile from "../Tile/Tile";
 import { useState, useRef } from "react";
-import Ruleset from "../../ruleset/ruleset";
+import Rules from "../../ruleset/Rules";
 import {
   HORIZONTAL_AXIS,
   VERTICAL_AXIS,
@@ -12,13 +12,16 @@ import {
   samePosition,
 } from "../../Constants";
 import { initialBoardState, Piece } from "../../InitialBoardState";
+// import { Rook } from "../../../public/assets/images/rook_w.png";
 
 const ChessBoard = () => {
   const [activePiece, setActivePiece] = useState<HTMLElement | null>(null);
+  const [promotionPawn, setPromotionPawn] = useState<Piece>();
   const [grabPosition, setGrabPosition] = useState<Position>({ x: 0, y: 0 });
   const [pieces, setPieces] = useState<Piece[]>(initialBoardState);
   const chessBoardRef = useRef<HTMLDivElement>(null);
-  const rulesetRef = new Ruleset();
+  const rulesetRef = new Rules();
+  const modalRef = useRef<HTMLDivElement>(null);
 
   function grabPiece(e: React.MouseEvent) {
     const element = e.target as HTMLElement;
@@ -113,10 +116,9 @@ const ChessBoard = () => {
           }, [] as Piece[]);
           setPieces(updatedPieces);
         } else if (validMove) {
-          //UPDATES THE PIECE POSITION
-          //AND IF A PIECE IS ATTACKED, REMOVES IT
           const updatedPieces = pieces.reduce((results, piece) => {
             if (samePosition(piece.position, grabPosition)) {
+              console.log("piece", piece);
               if (Math.abs(grabPosition.y - y) === 2 && currentPiece.type === PieceType.PAWN) {
                 piece.enpassant = true;
               } else {
@@ -124,6 +126,11 @@ const ChessBoard = () => {
               }
               piece.position.x = x;
               piece.position.y = y;
+              let promotionRow = currentPiece.team === TeamType.OUR ? 7 : 0;
+              if (y === promotionRow && currentPiece.type === PieceType.PAWN) {
+                modalRef.current?.classList.remove("hidden");
+                setPromotionPawn(piece);
+              }
               results.push(piece);
             } else if (!samePosition(piece.position, { x, y })) {
               results.push(piece);
@@ -144,6 +151,29 @@ const ChessBoard = () => {
     }
   }
 
+  function promotePawn(pieceType: PieceType) {
+    if (promotionPawn === undefined) {
+      return;
+    }
+    const updatedPieces = pieces.reduce((results, piece) => {
+      if (samePosition(piece.position, promotionPawn.position)) {
+        const teamType = piece.team === TeamType.OUR ? "w" : "b";
+        piece.type = pieceType;
+        const pieceString = PieceType[pieceType].toLowerCase();
+        piece.image = `assets/images/${pieceString}_${teamType}.png`;
+      }
+      results.push(piece);
+      return results;
+    }, [] as Piece[]);
+
+    setPieces(updatedPieces);
+    modalRef.current?.classList.add("hidden");
+  }
+
+  function promotionTeamType() {
+    return promotionPawn?.team === TeamType.OUR ? "w" : "b";
+  }
+
   let board = [];
   for (let j = HORIZONTAL_AXIS.length - 1; j >= 0; j--) {
     for (let i = 0; i < VERTICAL_AXIS.length; i++) {
@@ -158,15 +188,49 @@ const ChessBoard = () => {
   }
 
   return (
-    <div
-      onMouseDown={(e) => grabPiece(e)}
-      onMouseMove={(e) => movePiece(e)}
-      onMouseUp={(e) => dropPiece(e)}
-      id="chessboard"
-      ref={chessBoardRef}
-    >
-      {board}
-    </div>
+    <>
+      <div id="pawn-promotion-modal" className="hidden" ref={modalRef}>
+        <div id="promotion-choices">
+          <div className="promotion-choice" id="queen">
+            <img
+              onClick={() => promotePawn(PieceType.QUEEN)}
+              src={`/assets/images/queen_${promotionTeamType()}.png`}
+              alt="queen"
+            />
+          </div>
+          <div className="promotion-choice" id="rook">
+            <img
+              onClick={() => promotePawn(PieceType.ROOK)}
+              src={`/assets/images/rook_${promotionTeamType()}.png`}
+              alt="rook"
+            />
+          </div>
+          <div className="promotion-choice" id="bishop">
+            <img
+              onClick={() => promotePawn(PieceType.BISHOP)}
+              src={`/assets/images/bishop_${promotionTeamType()}.png`}
+              alt="bishop"
+            />
+          </div>
+          <div className="promotion-choice" id="knight">
+            <img
+              onClick={() => promotePawn(PieceType.KNIGHT)}
+              src={`/assets/images/knight_${promotionTeamType()}.png`}
+              alt="knight"
+            />
+          </div>
+        </div>
+      </div>
+      <div
+        onMouseDown={(e) => grabPiece(e)}
+        onMouseMove={(e) => movePiece(e)}
+        onMouseUp={(e) => dropPiece(e)}
+        id="chessboard"
+        ref={chessBoardRef}
+      >
+        {board}
+      </div>
+    </>
   );
 };
 

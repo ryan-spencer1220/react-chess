@@ -7,7 +7,7 @@ import { pawnMovementLogic } from "./rules/Pawn";
 import { queenMovementLogic } from "./rules/Queen";
 import { rookMovementLogic } from "./rules/Rook";
 
-export default class Ruleset {
+export default class Rules {
   isEnpassantMove(
     initialPosition: Position,
     desiredPosition: Position,
