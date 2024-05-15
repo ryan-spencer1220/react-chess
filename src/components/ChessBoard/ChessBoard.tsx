@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import "./Chessboard.css";
 import Tile from "../Tile/Tile";
-import { VERTICAL_AXIS, HORIZONTAL_AXIS, GRID_SIZE, samePosition } from "../../Constants";
+import { VERTICAL_AXIS, HORIZONTAL_AXIS, GRID_SIZE } from "../../Constants";
 import { Piece, Position } from "../../models";
 
 interface Props {
@@ -35,6 +35,7 @@ export default function Chessboard({ playMove, pieces }: Props) {
   function movePiece(e: React.MouseEvent) {
     const chessboard = chessboardRef.current;
     if (activePiece && chessboard) {
+      // Set boundaries for piece movement
       const minX = chessboard.offsetLeft - 25;
       const minY = chessboard.offsetTop - 25;
       const maxX = chessboard.offsetLeft + chessboard.clientWidth - 75;
@@ -43,29 +44,20 @@ export default function Chessboard({ playMove, pieces }: Props) {
       const y = e.clientY - 50;
       activePiece.style.position = "absolute";
 
-      //If x is smaller than minimum amount
+      // Restrict movement within the chessboard
       if (x < minX) {
         activePiece.style.left = `${minX}px`;
-      }
-      //If x is bigger than maximum amount
-      else if (x > maxX) {
+      } else if (x > maxX) {
         activePiece.style.left = `${maxX}px`;
-      }
-      //If x is in the constraints
-      else {
+      } else {
         activePiece.style.left = `${x}px`;
       }
 
-      //If y is smaller than minimum amount
       if (y < minY) {
         activePiece.style.top = `${minY}px`;
-      }
-      //If y is bigger than maximum amount
-      else if (y > maxY) {
+      } else if (y > maxY) {
         activePiece.style.top = `${maxY}px`;
-      }
-      //If y is in the constraints
-      else {
+      } else {
         activePiece.style.top = `${y}px`;
       }
     }
@@ -77,13 +69,13 @@ export default function Chessboard({ playMove, pieces }: Props) {
       const x = Math.floor((e.clientX - chessboard.offsetLeft) / GRID_SIZE);
       const y = Math.abs(Math.ceil((e.clientY - chessboard.offsetTop - 800) / GRID_SIZE));
 
-      const currentPiece = pieces.find((p) => samePosition(p.position, grabPosition));
+      const currentPiece = pieces.find((p) => p.samePosition(grabPosition));
 
       if (currentPiece) {
-        var succes = playMove(currentPiece, new Position(x, y));
+        var succes = playMove(currentPiece.clone(), new Position(x, y));
 
+        // If move is not successful, reset piece to its original position
         if (!succes) {
-          //RESETS THE PIECE POSITION
           activePiece.style.position = "relative";
           activePiece.style.removeProperty("top");
           activePiece.style.removeProperty("left");
@@ -93,26 +85,25 @@ export default function Chessboard({ playMove, pieces }: Props) {
     }
   }
 
+  // Render the chessboard tiles and pieces
   let board = [];
-
   for (let j = VERTICAL_AXIS.length - 1; j >= 0; j--) {
     for (let i = 0; i < HORIZONTAL_AXIS.length; i++) {
       const number = j + i + 2;
-      const piece = pieces.find((p) => samePosition(p.position, new Position(i, j)));
+      const piece = pieces.find((p) => p.samePosition(new Position(i, j)));
       let image = piece ? piece.image : undefined;
 
       let currentPiece =
-        activePiece != null
-          ? pieces.find((p) => samePosition(p.position, grabPosition))
-          : undefined;
+        activePiece != null ? pieces.find((p) => p.samePosition(grabPosition)) : undefined;
       let highlight = currentPiece?.possibleMoves
-        ? currentPiece.possibleMoves.some((p) => samePosition(p, new Position(i, j)))
+        ? currentPiece.possibleMoves.some((p) => p.samePosition(new Position(i, j)))
         : false;
 
       board.push(<Tile key={`${j},${i}`} image={image} number={number} highlight={highlight} />);
     }
   }
 
+  // Event handlers for mouse actions
   return (
     <>
       <div
