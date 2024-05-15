@@ -7,6 +7,7 @@
   background-color: blue;
 }
 
+/*Prevents gap between container and modal*/
 .modal {
   position: absolute;
   top: 0px;
@@ -19,6 +20,7 @@
   display: none;
 }
 
+/*calculates the position to be 50% from the top of the containing block and 50% from the left of the containing block*/
 .modal > .modal-body {
   position: absolute;
   top: calc(50% - 150px);

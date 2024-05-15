@@ -12,6 +12,7 @@ export default function Referee() {
   const modalRef = useRef<HTMLDivElement>(null);
   const checkmateModalRef = useRef<HTMLDivElement>(null);
 
+  // Determines if move is valid
   function playMove(playedPiece: Piece, destination: Position): boolean {
     // If the playing piece doesn't have any moves return
     if (playedPiece.possibleMoves === undefined) return false;
@@ -33,12 +34,9 @@ export default function Referee() {
       playedPiece.team
     );
 
-    // playMove modifies the board thus we
-    // need to call setBoard
     setBoard(() => {
       const clonedBoard = board.clone();
       clonedBoard.totalTurns += 1;
-      // Playing the move
       playedMoveIsValid = clonedBoard.playMove(enPassantMove, validMove, playedPiece, destination);
 
       if (clonedBoard.winningTeam !== undefined) {
@@ -48,7 +46,7 @@ export default function Referee() {
       return clonedBoard;
     });
 
-    // This is for promoting a pawn
+    // Pawn promotion
     let promotionRow = playedPiece.team === TeamType.OUR ? 7 : 0;
 
     if (destination.y === promotionRow && playedPiece.isPawn) {
@@ -63,6 +61,7 @@ export default function Referee() {
     return playedMoveIsValid;
   }
 
+  // This function checks if the move is a valid en passant move
   function isEnPassantMove(
     initialPosition: Position,
     desiredPosition: Position,

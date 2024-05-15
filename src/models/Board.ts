@@ -27,7 +27,7 @@ export class Board {
   }
 
   calculateAllMoves() {
-    // Calculate the moves of all the pieces
+    // Calculate the moves of all pieces
     for (const piece of this.pieces) {
       piece.possibleMoves = this.getValidMoves(piece, this.pieces);
     }
@@ -39,7 +39,6 @@ export class Board {
       king.possibleMoves = [...king.possibleMoves, ...getCastlingMoves(king, this.pieces)];
     }
 
-    // Check if the current team moves are valid
     this.checkCurrentTeamMoves();
 
     // Remove the posibble moves for the team that is not playing

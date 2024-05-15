@@ -14,6 +14,7 @@ export default function Chessboard({ playMove, pieces }: Props) {
   const [grabPosition, setGrabPosition] = useState<Position>(new Position(-1, -1));
   const chessboardRef = useRef<HTMLDivElement>(null);
 
+  // Grab chess piece and set x, y coordinates
   function grabPiece(e: React.MouseEvent) {
     const element = e.target as HTMLElement;
     const chessboard = chessboardRef.current;
@@ -32,6 +33,7 @@ export default function Chessboard({ playMove, pieces }: Props) {
     }
   }
 
+  // Restricts the  movement of the piece within the chessboard
   function movePiece(e: React.MouseEvent) {
     const chessboard = chessboardRef.current;
     if (activePiece && chessboard) {
@@ -103,7 +105,6 @@ export default function Chessboard({ playMove, pieces }: Props) {
     }
   }
 
-  // Event handlers for mouse actions
   return (
     <>
       <div
