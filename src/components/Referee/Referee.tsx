@@ -1,18 +1,23 @@
-import Chessboard from "../ChessBoard/ChessBoard";
-import { Position } from "../../Constants";
-import { Piece, initialBoardState } from "../../InitialBoardState";
-import { useEffect, useState } from "react";
-import { PieceType } from "../../Constants";
-import { bishopMovementLogic, getPossibleBishopMoves } from "../../ruleset/rules/Bishop";
-import { getPossibleKingMoves, kingMovementLogic } from "../../ruleset/rules/King";
-import { getPossibleKnightMoves, knightMovementLogic } from "../../ruleset/rules/Knight";
-import { pawnMovementLogic, getPossiblePawnMoves } from "../../ruleset/rules/Pawn";
-import { getPossibleQueenMoves, queenMovementLogic } from "../../ruleset/rules/Queen";
-import { getPossibleRookMoves, rookMovementLogic } from "../../ruleset/rules/Rook";
-import { TeamType, samePosition } from "../../Constants";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { initialBoardState, PieceType, TeamType } from "../../Constants";
+import { Piece, Position } from "../../models";
+import {
+  bishopMove,
+  getPossibleBishopMoves,
+  getPossibleKingMoves,
+  getPossibleKnightMoves,
+  getPossiblePawnMoves,
+  getPossibleQueenMoves,
+  getPossibleRookMoves,
+  kingMove,
+  knightMove,
+  pawnMove,
+  queenMove,
+  rookMove,
+} from "../../referee/rules";
+import Chessboard from "../ChessBoard/Chessboard";
 
-export default function RuleSet() {
+export default function Referee() {
   const [pieces, setPieces] = useState<Piece[]>(initialBoardState);
   const [promotionPawn, setPromotionPawn] = useState<Piece>();
   const modalRef = useRef<HTMLDivElement>(null);
@@ -49,13 +54,13 @@ export default function RuleSet() {
 
     if (enPassantMove) {
       const updatedPieces = pieces.reduce((results, piece) => {
-        if (samePosition(piece.position, playedPiece.position)) {
+        if (piece.position.samePosition(playedPiece.position)) {
           piece.enPassant = false;
           piece.position.x = destination.x;
           piece.position.y = destination.y;
           results.push(piece);
         } else if (
-          !samePosition(piece.position, { x: destination.x, y: destination.y - pawnDirection })
+          !piece.position.samePosition(new Position(destination.x, destination.y - pawnDirection))
         ) {
           if (piece.type === PieceType.PAWN) {
             piece.enPassant = false;
@@ -72,7 +77,7 @@ export default function RuleSet() {
       //UPDATES THE PIECE POSITION
       //AND IF A PIECE IS ATTACKED, REMOVES IT
       const updatedPieces = pieces.reduce((results, piece) => {
-        if (samePosition(piece.position, playedPiece.position)) {
+        if (piece.position.samePosition(playedPiece.position)) {
           //SPECIAL MOVE
           piece.enPassant =
             Math.abs(playedPiece.position.y - destination.y) === 2 && piece.type === PieceType.PAWN;
@@ -87,7 +92,7 @@ export default function RuleSet() {
             setPromotionPawn(piece);
           }
           results.push(piece);
-        } else if (!samePosition(piece.position, { x: destination.x, y: destination.y })) {
+        } else if (!piece.position.samePosition(new Position(destination.x, destination.y))) {
           if (piece.type === PieceType.PAWN) {
             piece.enPassant = false;
           }
@@ -150,22 +155,22 @@ export default function RuleSet() {
     let validMove = false;
     switch (type) {
       case PieceType.PAWN:
-        validMove = pawnMovementLogic(initialPosition, desiredPosition, team, pieces);
+        validMove = pawnMove(initialPosition, desiredPosition, team, pieces);
         break;
       case PieceType.KNIGHT:
-        validMove = knightMovementLogic(initialPosition, desiredPosition, team, pieces);
+        validMove = knightMove(initialPosition, desiredPosition, team, pieces);
         break;
       case PieceType.BISHOP:
-        validMove = bishopMovementLogic(initialPosition, desiredPosition, team, pieces);
+        validMove = bishopMove(initialPosition, desiredPosition, team, pieces);
         break;
       case PieceType.ROOK:
-        validMove = rookMovementLogic(initialPosition, desiredPosition, pieces);
+        validMove = rookMove(initialPosition, desiredPosition, team, pieces);
         break;
       case PieceType.QUEEN:
-        validMove = queenMovementLogic(initialPosition, desiredPosition, team, pieces);
+        validMove = queenMove(initialPosition, desiredPosition, team, pieces);
         break;
       case PieceType.KING:
-        validMove = kingMovementLogic(initialPosition, desiredPosition, team, pieces);
+        validMove = kingMove(initialPosition, desiredPosition, team, pieces);
     }
 
     return validMove;
@@ -196,7 +201,7 @@ export default function RuleSet() {
     }
 
     const updatedPieces = pieces.reduce((results, piece) => {
-      if (samePosition(piece.position, promotionPawn.position)) {
+      if (piece.position.samePosition(promotionPawn.position)) {
         piece.type = pieceType;
         const teamType = piece.team === TeamType.OUR ? "w" : "b";
         let image = "";

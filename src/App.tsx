@@ -1,12 +1,10 @@
 import "./App.css";
-import ChessBoard from "./components/ChessBoard/ChessBoard";
-import RuleSet from "./components/RuleSet/RuleSet";
+import RuleSet from "./components/Referee/Referee";
 
 function App() {
   return (
     <div className="app">
       <RuleSet />
-      {/* <ChessBoard /> */}
     </div>
   );
 }
